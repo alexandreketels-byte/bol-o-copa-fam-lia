@@ -4,7 +4,7 @@
  * Troque API_URL pela URL do seu Web App do Google Apps Script.
  */
 const CONFIG = {
-  API_URL: 'COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT',
+  API_URL: 'https://script.google.com/macros/s/AKfycbwG5EwDD-4TaNBhOFEFcrysKbAfxEjuCalHu2MiwxuCxzgcuTf6sRV_kr2Vi2cXOgTcbA/exec',
   SENHA_ADMIN_PADRAO: '' // opcional: pode deixar vazio e digitar na hora
 };
 
