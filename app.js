@@ -169,7 +169,7 @@ function renderizar() {
         <div class="bola"></div>
         <div>
           <h1>Bolão da Copa</h1>
-          <div class="sub">Bolão em família · 12 participantes</div>
+          <div class="sub">Bolão em família </div>
         </div>
       </div>
       <div class="usuario-chip">
