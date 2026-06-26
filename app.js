@@ -169,8 +169,11 @@ function renderizar() {
         <div class="bola"></div>
         <div>
           <h1>Bolão da Copa</h1>
-          <div class="sub">⚽⚽   🥇R$100,00  🥈R$20,00 🥉R$10,00</div>
-        </div>
+          <div class="sub premios-sub">
+  <span>🥇 R$ 100,00</span>
+  <span>🥈 R$ 20,00</span>
+  <span>🥉 R$ 10,00</span>
+</div>
       </div>
       <div class="usuario-chip">
         <img src="${eu?.foto || fotoPadrao()}" onerror="this.src='${fotoPadrao()}'">
