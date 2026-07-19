@@ -71,6 +71,7 @@ button{font-family:inherit; cursor:pointer;}
 .marca .sub{font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ouro); margin-top:2px;}
 .premios-sub{display:flex; flex-direction:column; gap:2px; text-transform:none; letter-spacing:0;}
 .premios-sub span{font-size:12px; font-weight:600;}
+
 .usuario-chip{
   display:flex; align-items:center; gap:8px;
   background:rgba(0,0,0,0.25); border:1px solid var(--linha);
@@ -209,6 +210,64 @@ button{font-family:inherit; cursor:pointer;}
 }
 .pin-input:focus{outline:none; border-color:var(--ouro);}
 .pin-erro{color:#e98a76; font-size:12px; min-height:16px; margin-top:8px;}
+
+/* ============ TELA DE ENCERRAMENTO ============ */
+.tela-encerramento{padding-bottom:60px;}
+.enc-topo{
+  display:flex; align-items:center; gap:12px; padding:18px 4px 20px;
+  border-bottom:2px dashed var(--linha); margin-bottom:28px; justify-content:space-between;
+}
+.enc-titulo{text-align:center; margin-bottom:32px;}
+.enc-sub{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ouro); margin-bottom:8px;}
+.enc-h2{font-size:28px; margin-bottom:8px;}
+.enc-legenda{color:rgba(242,239,230,0.6); font-size:14px; margin:0;}
+
+.podio-final{display:flex; flex-direction:column; gap:16px; margin-bottom:32px;}
+
+.cartao-vencedor{
+  background:rgba(0,0,0,0.25); border:1px solid var(--linha); border-radius:20px;
+  padding:24px 20px; text-align:center; position:relative; overflow:hidden;
+}
+.cartao-campiao{
+  border-color:var(--ouro); border-width:2px;
+  background: radial-gradient(circle at 50% 0%, rgba(232,185,75,0.12), transparent 60%), rgba(0,0,0,0.3);
+}
+.cartao-campiao::before{
+  content:''; position:absolute; inset:0;
+  background: repeating-linear-gradient(45deg, transparent 0 8px, rgba(232,185,75,0.03) 8px 9px);
+}
+
+.medalha-grande{font-size:36px; margin-bottom:4px;}
+.titulo-posicao{font-family:'Archivo Black',sans-serif; font-size:13px; letter-spacing:0.12em; margin-bottom:16px;}
+
+.foto-vencedor-wrap{
+  position:relative; width:96px; height:96px; margin:0 auto 14px;
+  border-radius:50%; border:3px solid var(--ouro);
+}
+.cartao-campiao .foto-vencedor-wrap{width:120px; height:120px; border-width:4px;}
+.foto-vencedor-wrap img{width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;}
+.trofeu-overlay{
+  position:absolute; bottom:-6px; right:-6px; font-size:28px;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+}
+
+.nome-vencedor{font-family:'Archivo Black',sans-serif; font-size:20px; margin-bottom:4px;}
+.cartao-campiao .nome-vencedor{font-size:24px;}
+.pontos-vencedor{font-family:'JetBrains Mono',monospace; font-size:13px; color:rgba(242,239,230,0.6); margin-bottom:10px;}
+.premio-vencedor{font-family:'Archivo Black',sans-serif; font-size:26px; margin-bottom:6px;}
+.cartao-campiao .premio-vencedor{font-size:32px;}
+.detalhe-vencedor{font-size:11px; color:rgba(242,239,230,0.45);}
+
+.enc-demais{margin-top:8px;}
+.enc-demais-titulo{
+  font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(242,239,230,0.45);
+  margin-bottom:10px; text-align:center;
+}
+
+@media(min-width:600px){
+  .podio-final{flex-direction:row; align-items:stretch;}
+  .cartao-vencedor{flex:1;}
+}
 
 /* ============ RANKING ============ */
 .podio{display:flex; gap:10px; align-items:flex-end; margin-bottom:24px; justify-content:center;}
