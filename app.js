@@ -16,6 +16,7 @@ let estado = {
   jogos: [],
   palpites: [],
   ranking: [],
+  bolaoEncerrado: false,
   participanteAtual: null,
   token: null,
   abaAtiva: 'palpites'
@@ -29,6 +30,11 @@ async function iniciar() {
   const idSalvo = localStorage.getItem(STORAGE_KEY);
   const tokenSalvo = localStorage.getItem(STORAGE_KEY_TOKEN);
   await carregarTudo();
+
+  if (estado.bolaoEncerrado) {
+    renderizarEncerramento();
+    return;
+  }
 
   if (idSalvo && tokenSalvo && estado.participantes.find(p => p.id === idSalvo)) {
     estado.participanteAtual = idSalvo;
@@ -46,6 +52,7 @@ async function carregarTudo() {
     estado.jogos = resp.jogos || [];
     estado.palpites = resp.palpites || [];
     estado.ranking = resp.ranking || [];
+    estado.bolaoEncerrado = resp.bolaoEncerrado || false;
   } catch (err) {
     mostrarToast('Erro ao carregar dados. Verifique a conexão.', true);
   }
@@ -506,6 +513,12 @@ function renderizarAdmin() {
       </div>
 
       <div id="bloco-lancar-placar"></div>
+
+      <div class="bloco-admin" style="border-color:rgba(194,59,34,0.4);">
+        <h3 style="color:#e98a76;">Zona de perigo</h3>
+        <p style="font-size:13px; color:rgba(242,239,230,0.6); margin:0 0 14px;">Ao encerrar o bolão, a tela de campeão aparece para todos os participantes automaticamente.</p>
+        <button class="btn-primario" style="background:var(--vermelho); color:var(--giz);" onclick="adminEncerrarBolao()">🏆 Encerrar bolão e revelar campeão</button>
+      </div>
     </div>
   `;
 }
@@ -612,6 +625,104 @@ async function adminExcluirJogo(jogoId) {
   } catch (err) {
     mostrarToast(err.message, true);
   }
+}
+
+async function adminEncerrarBolao() {
+  const senha = prompt('Digite a senha de admin para ENCERRAR o bolão:');
+  if (!senha) return;
+  if (!confirm('Tem certeza? Isso vai mostrar a tela de campeão para todo mundo e travar o bolão.')) return;
+
+  try {
+    await apiPost({ action: 'adminEncerrarBolao', senha: senha, encerrado: true });
+    mostrarToast('Bolão encerrado! 🏆');
+    await carregarTudo();
+    renderizarEncerramento();
+  } catch (err) {
+    mostrarToast(err.message, true);
+  }
+}
+
+async function adminReabrirBolao() {
+  const senha = prompt('Digite a senha de admin para reabrir o bolão:');
+  if (!senha) return;
+
+  try {
+    await apiPost({ action: 'adminEncerrarBolao', senha: senha, encerrado: false });
+    mostrarToast('Bolão reaberto.');
+    await carregarTudo();
+    renderizar();
+  } catch (err) {
+    mostrarToast(err.message, true);
+  }
+}
+
+// ---------- TELA DE ENCERRAMENTO ----------
+
+function renderizarEncerramento() {
+  const app = document.getElementById('app');
+  const ranking = estado.ranking;
+
+  if (!ranking || ranking.length === 0) {
+    app.innerHTML = '<div class="vazio" style="padding:80px 20px;">Carregando resultado final…</div>';
+    return;
+  }
+
+  const premios = ['R$ 100,00', 'R$ 20,00', 'R$ 10,00'];
+  const medalhas = ['🥇', '🥈', '🥉'];
+  const titulos = ['CAMPEÃO', '2º LUGAR', '3º LUGAR'];
+  const cores = ['var(--ouro)', 'rgba(192,192,192,0.9)', 'rgba(205,127,50,0.9)'];
+
+  const top3 = ranking.slice(0, 3);
+
+  app.innerHTML = `
+    <div class="tela-encerramento">
+      <div class="enc-topo">
+        <div class="bola" style="width:32px;height:32px;flex-shrink:0;"></div>
+        <h1 style="font-size:18px;">Bolão da Copa</h1>
+        <button class="btn-secundario" style="font-size:11px; padding:5px 10px;" onclick="adminReabrirBolao()">Reabrir (admin)</button>
+      </div>
+
+      <div class="enc-titulo">
+        <div class="enc-sub">RESULTADO FINAL</div>
+        <h2 class="enc-h2">O bolão acabou! 🎉</h2>
+        <p class="enc-legenda">Parabéns a todos que participaram. Confira os vencedores:</p>
+      </div>
+
+      <div class="podio-final">
+        ${top3.map((p, i) => `
+          <div class="cartao-vencedor ${i === 0 ? 'cartao-campiao' : ''}">
+            <div class="medalha-grande">${medalhas[i]}</div>
+            <div class="titulo-posicao" style="color:${cores[i]}">${titulos[i]}</div>
+            <div class="foto-vencedor-wrap" style="border-color:${cores[i]}">
+              <img src="${p.foto || fotoPadrao()}" onerror="this.src='${fotoPadrao()}'">
+              ${i === 0 ? '<div class="trofeu-overlay">🏆</div>' : ''}
+            </div>
+            <div class="nome-vencedor">${escapeHtml(p.nome)}</div>
+            <div class="pontos-vencedor">${p.pontos} pontos</div>
+            <div class="premio-vencedor" style="color:${cores[i]}">${premios[i]}</div>
+            <div class="detalhe-vencedor">${p.detalhe.placarExato} placar exato · ${p.detalhe.resultadoCerto} resultado certo</div>
+          </div>
+        `).join('')}
+      </div>
+
+      ${ranking.length > 3 ? `
+        <div class="enc-demais">
+          <div class="enc-demais-titulo">Classificação completa</div>
+          ${ranking.slice(3).map((p, i) => `
+            <div class="linha-ranking">
+              <div class="pos-num">${i + 4}</div>
+              <img src="${p.foto || fotoPadrao()}" onerror="this.src='${fotoPadrao()}'">
+              <div class="info-ranking">
+                <div class="nome-r">${escapeHtml(p.nome)}</div>
+                <div class="detalhe-r">${p.detalhe.placarExato} placar exato · ${p.detalhe.resultadoCerto} resultado</div>
+              </div>
+              <div class="pts-total">${p.pontos}<span>pontos</span></div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>
+  `;
 }
 
 // ---------- UTIL ----------
